@@ -99,7 +99,8 @@ export default function Home() {
       <Navigation onNavigate={scrollTo} />
 
       <Hero onNavigate={scrollTo} />
-
+      {/* Interactive Globe - positioned in the root/hero section */}
+      <InteractiveGlobe />
       <FlowArt>
         <About />
         <Experience />

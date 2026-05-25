@@ -50,6 +50,8 @@ export default function Hero({ onNavigate }: HeroProps) {
           </div>
         </motion.div>
       </div>
+      {/* Gradient fade on the right side for better globe integration */}
+      <div className="absolute right-0 top-0 bottom-0 w-[40%] bg-gradient-to-l from-black/50 to-transparent pointer-events-none" />
     </section>
   );
 }
