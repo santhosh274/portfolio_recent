@@ -7,7 +7,7 @@ import { links } from "@/lib/constants";
 
 export default function Footer() {
   return (
-    <footer id="connect" className="relative bg-[#050508] border-t border-zinc-900 overflow-hidden">
+    <footer id="connect" className="relative bg-[#000000] border-t border-zinc-900 overflow-hidden">
       <div className="max-w-7xl mx-auto px-6 md:px-[10vw] pt-20 pb-10 z-40 relative">
         {/* CTA Heading */}
         <motion.div

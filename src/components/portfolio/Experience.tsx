@@ -10,7 +10,7 @@ export default function Experience() {
     <FlowSection
       id="experience"
       ariaLabel="Experience"
-      style={{ backgroundColor: "#050508" }}
+      style={{ backgroundColor: "#000000" }}
     >
 
       <p className="text-zinc-500 text-sm font-mono uppercase tracking-widest">

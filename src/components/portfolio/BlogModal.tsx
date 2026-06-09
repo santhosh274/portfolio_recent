@@ -28,7 +28,7 @@ export default function BlogModal({ post, onClose }: BlogModalProps) {
             initial={{ opacity: 0, y: 20, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
-            className="bg-[#0a0a0f] w-full max-w-4xl max-h-[90vh] overflow-y-auto rounded-3xl border border-zinc-800 p-8 md:p-12 relative custom-scrollbar shadow-2xl"
+            className="bg-[#050505] w-full max-w-4xl max-h-[90vh] overflow-y-auto rounded-3xl border border-zinc-800 p-8 md:p-12 relative custom-scrollbar shadow-2xl"
             onClick={(e) => e.stopPropagation()}
             onWheel={(e) => e.stopPropagation()}
             onTouchMove={(e) => e.stopPropagation()}

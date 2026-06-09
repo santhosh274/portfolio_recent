@@ -22,7 +22,7 @@ export default function Navigation({ onNavigate }: NavigationProps) {
         className="font-mono font-bold text-2xl pointer-events-auto cursor-pointer"
         onClick={() => onNavigate("top")}
       >
-        <span className="text-emerald-500">S</span>K
+        <span className="text-emerald-500">SK</span>
       </div>
       <ul className="hidden md:flex gap-8 font-mono text-sm pointer-events-auto">
         {navItems.map((link) => (

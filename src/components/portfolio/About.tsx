@@ -8,7 +8,7 @@ export default function About() {
     <FlowSection
       id="about"
       ariaLabel="About"
-      style={{ backgroundColor: "#0a0a0f" }}
+      style={{ backgroundColor: "#000000" }}
     >
       <p className="text-emerald-500 text-sm font-mono uppercase tracking-widest flex items-center gap-2">
         <Shield className="w-4 h-4" /> 01 — Mission
@@ -20,7 +20,7 @@ export default function About() {
       </h2>
       <div className="flex flex-col lg:flex-row gap-12 justify-between mt-8">
         <p className="max-w-[50ch] text-zinc-400 leading-relaxed font-mono">
-          I specialize in network security and building secure full-stack
+          I specialize in offensive security and building secure full-stack
           systems. My approach centers on layering security at every level of the
           stack, from authentication design to API hardening.
         </p>
@@ -28,8 +28,8 @@ export default function About() {
           {[
             "Ethical Hacking",
             "Vulnerability Analysis",
-            "Secure API Architecture",
-            "Threat Modeling",
+            "Digital Forensics",
+            "Fullstack Development",
           ].map((s) => (
             <div
               key={s}

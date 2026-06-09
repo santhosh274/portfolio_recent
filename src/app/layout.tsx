@@ -15,7 +15,7 @@ const spaceMono = Space_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Santhosh Kumarr A | Security-First Engineer",
+  title: "Santhosh Kumarr  A | Security-First Engineer",
   description:
     "Engineering secure digital infrastructures and building scalable full-stack systems with a disciplined security-first mindset. Specializing in network security, ethical hacking, and full-stack development.",
   keywords: [

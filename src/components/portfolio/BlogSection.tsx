@@ -13,7 +13,7 @@ export default function BlogSection({ onSelectPost }: BlogSectionProps) {
     <FlowSection
       id="research"
       ariaLabel="Research"
-      style={{ backgroundColor: "#130f1a" }}
+      style={{ backgroundColor: "#000000" }}
     >
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
         <div>

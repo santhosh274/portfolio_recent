@@ -24,7 +24,7 @@ export default function Hero({ onNavigate }: HeroProps) {
           <h1 className="text-[clamp(3rem,8vw,7rem)] font-bold leading-[0.9] tracking-tighter mb-6">
             Hi, I&apos;m <br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-white to-zinc-500">
-              Santhosh Kumarr A
+              Santhosh Kumarr 
             </span>
           </h1>
           <p className="text-[clamp(1.1rem,2vw,1.4rem)] text-zinc-400 max-w-2xl leading-relaxed mb-12">

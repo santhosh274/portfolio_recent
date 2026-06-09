@@ -10,7 +10,7 @@ export default function Projects() {
     <FlowSection
       id="projects"
       ariaLabel="Projects"
-      style={{ backgroundColor: "#0a0a0f" }}
+      style={{ backgroundColor: "#000000" }}
     >
       <p className="text-purple-500 text-sm font-mono uppercase tracking-widest flex items-center gap-2">
         <Server className="w-4 h-4" /> 03 — Engineering

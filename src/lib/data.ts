@@ -117,6 +117,13 @@ export const experienceEntries: ExperienceEntry[] = [
 
 export const projectEntries: ProjectEntry[] = [
   {
+    title: "Ongoing - Hyperlocal Supermarket Commerce Application",
+    year: "2026",
+    desc: "Flutter based mobile application for buying in-store items through an online platform",
+    tags: ["Flutter", "AWS", "Figma", "API Design"],
+    color: "purple",
+  },
+  {
     title: "Ransomware Detection & Blocking",
     year: "2026",
     desc: "Python based forensics tool for continuous directory check and early mitigation of encryption through Machine Learning.",
