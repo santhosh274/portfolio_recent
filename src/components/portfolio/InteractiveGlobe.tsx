@@ -326,7 +326,8 @@ export default function InteractiveGlobe() {
   }, []);
 
   return (
-    <div className="absolute right-0 top-1/2 -translate-y-1/2 w-[55vw] h-[55vw] max-w-[500px] max-h-[500px] pointer-events-none flex items-center justify-center">
+    <div className="absolute right-0 top-1/2 -translate-y-1/2 w-[55vw] h-[55vw] max-w-[500px] max-h-[500px] pointer-events-none flex items-center justify-center hidden md:flex">
+
       {/* Ambient glow backing */}
       <div className="absolute w-[70%] h-[70%] bg-cyan-500/10 rounded-full blur-[80px]" />
 
