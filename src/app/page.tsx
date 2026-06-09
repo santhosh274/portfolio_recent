@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect, useRef, useCallback } from "react";
-import Lenis from "@studio-freight/lenis";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
@@ -14,6 +13,7 @@ import Experience from "@/components/portfolio/Experience";
 import Projects from "@/components/portfolio/Projects";
 import BlogSection from "@/components/portfolio/BlogSection";
 import Footer from "@/components/portfolio/Footer";
+import InteractiveGlobe from "@/components/portfolio/InteractiveGlobe";
 
 import type { BlogPost } from "@/lib/data";
 
@@ -26,68 +26,37 @@ const BlogModal = dynamic(() => import("@/components/portfolio/BlogModal"), {
 gsap.registerPlugin(ScrollTrigger);
 
 export default function Home() {
-  const lenisRef = useRef<Lenis | null>(null);
+  const lenisRef = useRef<any | null>(null);
   const [selectedPost, setSelectedPost] = useState<BlogPost | null>(null);
 
-  const createLenis = useCallback(() => {
-    const lenis = new Lenis({
-      duration: 1.2,
-      easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-      smoothWheel: true,
-    });
-    lenis.on("scroll", ScrollTrigger.update);
-    gsap.ticker.add((time: number) => lenis.raf(time * 1000));
-    gsap.ticker.lagSmoothing(0);
-    return lenis;
+  // Initialize native smooth scrolling with GSAP ScrollSmoother alternative
+  useEffect(() => {
+    // Enable native smooth scrolling via CSS
+    document.documentElement.style.scrollBehavior = "smooth";
+    
+    return () => {
+      document.documentElement.style.scrollBehavior = "auto";
+    };
   }, []);
 
-  // Initialize Lenis on mount
-  useEffect(() => {
-    lenisRef.current = createLenis();
-    return () => {
-      if (lenisRef.current) {
-        gsap.ticker.remove(lenisRef.current.raf);
-        lenisRef.current.destroy();
-        lenisRef.current = null;
-      }
-    };
-  }, [createLenis]);
-
-  // Destroy / recreate Lenis when modal opens/closes
+  // Handle body overflow when modal opens/closes
   useEffect(() => {
     if (selectedPost) {
-      // Fully destroy Lenis so its event listeners on <html> are removed
-      if (lenisRef.current) {
-        gsap.ticker.remove(lenisRef.current.raf);
-        lenisRef.current.destroy();
-        lenisRef.current = null;
-      }
       document.body.style.overflow = "hidden";
     } else {
-      // Recreate Lenis when modal closes
       document.body.style.overflow = "";
-      if (!lenisRef.current) {
-        lenisRef.current = createLenis();
-        ScrollTrigger.refresh();
-      }
     }
-  }, [selectedPost, createLenis]);
+  }, [selectedPost]);
 
   const scrollTo = useCallback(
     (id: string) => {
       if (id === "top") {
-        if (lenisRef.current) {
-          lenisRef.current.scrollTo(0);
-        } else {
-          window.scrollTo({ top: 0, behavior: "smooth" });
-        }
+        window.scrollTo({ top: 0, behavior: "smooth" });
         return;
       }
-      if (lenisRef.current) {
-        lenisRef.current.scrollTo(`#${id}`, { offset: 0 });
-      } else {
-        const el = document.getElementById(id);
-        if (el) el.scrollIntoView({ behavior: "smooth" });
+      const el = document.getElementById(id);
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth" });
       }
     },
     []
