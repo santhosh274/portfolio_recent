@@ -1,19 +1,17 @@
 import { NextResponse } from "next/server";
 
-const allowedOrigins = ["http://192.168.232.1:3000", "http://192.168.232.1"];
+const allowedOrigins = ["https://santhosh-kumarr.vercel.app"];
 
 function corsHeaders(origin: string | null) {
   if (origin && allowedOrigins.includes(origin)) {
     return {
       "Access-Control-Allow-Origin": origin,
-      "Access-Control-Allow-Credentials": "true",
       Vary: "Origin",
     };
   }
 
   return {
-    "Access-Control-Allow-Origin": "null",
-    "Access-Control-Allow-Credentials": "true",
+    "Access-Control-Allow-Origin": "",
     Vary: "Origin",
   };
 }

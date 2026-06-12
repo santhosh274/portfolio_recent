@@ -4,12 +4,12 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
-  --color-background: #000000;
+  --color-background: #0d001a;
   --color-foreground: #fafafa;
   --font-sans: var(--font-syne);
   --font-mono: var(--font-space-mono);
   --color-emerald-300: #67e8f9;
-  --color-emerald-400: #22d3ee;
+  --color-emerald-400: #2dd4bf;
   --color-emerald-500: #06b6d4;
   --color-emerald-900: #164e63;
   --color-emerald-950: #083344;
@@ -34,8 +34,9 @@
 }
 
 body {
-  background-color: #000000;
-  color: #fafafa;
+  background: linear-gradient(180deg, #0a0015 0%, #2d0055 50%, #550099 100%);
+  background-attachment: fixed;
+  color: #ffffff;
   margin: 0;
   padding: 0;
   overflow-x: hidden;
@@ -47,11 +48,11 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  background: #000000;
+  background: #1a0033;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #1e293b;
+  background: #ff5555;
   border-radius: 4px;
 }
 
@@ -64,10 +65,18 @@ body {
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: #06b6d4;
+  background: #ff0000;
   border-radius: 10px;
 }
 
 ::selection {
-  background-color: rgba(6, 182, 212, 0.3);
+  background-color: rgba(214, 69, 69, 0.2);
 }
+
+.grid-subtle {
+  background-image: 
+    linear-gradient(to right, rgba(214, 69, 69, 0.04) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(214, 69, 69, 0.04) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+

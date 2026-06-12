@@ -15,7 +15,10 @@ const spaceMono = Space_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Santhosh Kumarr  A | Security-First Engineer",
+  title: {
+    default: "Santhosh Kumarr A | Security-First Engineer & Full-Stack Developer",
+    template: "%s | Santhosh Kumarr A",
+  },
   description:
     "Engineering secure digital infrastructures and building scalable full-stack systems with a disciplined security-first mindset. Specializing in network security, ethical hacking, and full-stack development.",
   keywords: [
@@ -27,16 +30,34 @@ export const metadata: Metadata = {
     "React",
     "Node.js",
     "Python",
-    "next.js developer",
+    "Next.js",
     "portfolio",
+    "penetration testing",
+    "vulnerability assessment",
   ],
   authors: [
     {
       name: "Santhosh Kumarr A",
-      url: "https://www.linkedin.com/in/santhosh-kumarr-a-ace277",
+      url: "https://santhosh-kumarr.vercel.app",
     },
   ],
   creator: "Santhosh Kumarr A",
+  publisher: "Santhosh Kumarr A",
+  metadataBase: new URL("https://santhosh-kumarr.vercel.app"),
+  alternates: {
+    canonical: "/",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
   openGraph: {
     title: "Santhosh Kumarr A | Security-First Engineer",
     description:
@@ -52,7 +73,7 @@ export const metadata: Metadata = {
     description:
       "Security-First Engineer | Full-Stack Developer | Cybersecurity Specialist",
   },
-  robots: { index: true, follow: true },
+  category: "technology",
 };
 
 const jsonLd = {
@@ -61,6 +82,8 @@ const jsonLd = {
   name: "Santhosh Kumarr A",
   url: "https://santhosh-kumarr.vercel.app",
   jobTitle: "Security-First Engineer & Full-Stack Developer",
+  description:
+    "Security-First Engineer specializing in offensive security, network security, ethical hacking, and full-stack development.",
   sameAs: [
     "https://github.com/santhosh274",
     "https://www.linkedin.com/in/santhosh-kumarr-a-ace277",
@@ -70,10 +93,20 @@ const jsonLd = {
     "Full-Stack Development",
     "Ethical Hacking",
     "Network Security",
+    "Penetration Testing",
+    "Vulnerability Assessment",
     "React",
     "Node.js",
     "Python",
+    "Cloud Security",
   ],
+  alumniOf: [
+    {
+      "@type": "CollegeOrUniversity",
+      name: "Sri Eshwar College of Engineering",
+    },
+  ],
+  email: "santhoshkumarr.a7@gmail.com",
 };
 
 export default function RootLayout({
@@ -90,7 +123,7 @@ export default function RootLayout({
         />
       </head>
       <body
-        className={`${syne.variable} ${spaceMono.variable} font-sans antialiased bg-black text-zinc-100 selection:bg-emerald-500/30`}
+        className={`${syne.variable} ${spaceMono.variable} font-sans antialiased selection:bg-[#FF3535]/30`}
       >
         {children}
       </body>
