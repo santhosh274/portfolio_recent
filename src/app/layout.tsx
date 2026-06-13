@@ -74,7 +74,13 @@ export const metadata: Metadata = {
       "Security-First Engineer | Full-Stack Developer | Cybersecurity Specialist",
   },
   category: "technology",
+  icons: {
+    icon: "/favicon.ico",
+    shortcut: "/favicon.ico",
+    apple: "/apple-touch-icon.png",
+  },
 };
+
 
 const jsonLd = {
   "@context": "https://schema.org",
