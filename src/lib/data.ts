@@ -118,11 +118,11 @@ export const blogPosts: BlogPost[] = [
 
 export const experienceEntries: ExperienceEntry[] = [
   {
-    title: "Freelance Full-Stack Developer",
+    title: "Founder & Managing Director - Beacon",
     org: "Self-Employed",
     year: "2026",
-    desc: "Building and delivering custom full-stack web applications for diverse clients, focusing on scalable architecture and secure development practices.",
-    link: "apollodesign.vercel.app",
+    desc: "Managing end-to-end client engagements, technical strategy, and organizational direction while architecting and delivering high-performance web platforms, cloud-native solutions, and secure digital experiences.",
+    link: "teambeacon.vercel.app",
     tags: ["React.js", "Node.js", "Next.js"],
     color: "emerald",
     image: "/freelance.png",
