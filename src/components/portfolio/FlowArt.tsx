@@ -36,73 +36,14 @@ export default function FlowArt({ children, className }: FlowArtProps) {
           "[data-flow-horizontal-scroll]"
         );
 
-        // Check if PREVIOUS section has a horizontal carousel
-        const prevSection = sections[i - 1] as HTMLElement | undefined;
-        const prevHasCarousel = prevSection?.querySelector(
-          "[data-flow-horizontal-scroll]"
-        );
-
-        // ─── Entry animation ──────────────────────────────────────────────
+        // ─── Ensure all sections are fully visible (no rotation entrance animation) ──
         if (i > 0 && inner) {
-          if (isMobile) {
-            gsap.set(inner, { autoAlpha: 1, y: 0 });
-          } else {
-          const fromLeft = i % 2 === 1;
-
-          gsap.set(inner, {
-            rotation: fromLeft ? 12 : -12,
-            transformOrigin: fromLeft ? "bottom left" : "bottom right",
-            scale: 1.025,
-            autoAlpha: 0,
-            force3D: true,
-          });
-
-          if (prevHasCarousel) {
-            // The section after a carousel must stack OVER it like a normal card,
-            // but only after the carousel has shown all projects.
-            //
-            // How it works:
-            // - The carousel section is pinned with pinSpacing: true, which injects
-            //   a spacer equal to 1 viewport height into the page flow.
-            // - We trigger this entry animation off the PREVIOUS (carousel) section.
-            // - start: "bottom 100%" = the moment the carousel's bottom edge is at
-            //   the viewport bottom (carousel fully scrolled, last card visible).
-            // - end: "bottom 0%" = the carousel's bottom reaches the top of the
-            //   viewport (it has fully slid out of view behind the incoming card).
-            // - This maps 1:1 with the stacking behaviour of non-carousel cards:
-            //   they rotate in exactly as the previous section slides up and away.
-            gsap.to(inner, {
-              rotation: 0,
-              scale: 1,
-              autoAlpha: 1,
-              ease: "none",
-              force3D: true,
-              scrollTrigger: {
-                trigger: prevSection,       // anchor to the carousel section
-                start: "bottom 100%",       // carousel bottom enters viewport bottom
-                end: "bottom 0%",           // carousel bottom reaches viewport top
-                scrub: true,
-              },
-            });
-          } else {
-            gsap.to(inner, {
-              rotation: 0,
-              scale: 1,
-              autoAlpha: 1,
-              ease: "none",
-              force3D: true,
-              scrollTrigger: {
-                trigger: section,
-                start: "top 90%",
-                end: "top 50%",
-                scrub: true,
-              },
-            });
-          }
-          }
+          gsap.set(inner, { autoAlpha: 1, y: 0, rotation: 0, scale: 1 });
         }
 
-        // ─── Pin every non-last section (desktop only — too aggressive on mobile) ──
+        // ─── Pin every non-last section ──
+        // On mobile, pin only sections with carousels so they have enough
+        // scroll distance to fully translate all items horizontally.
         const hScroll = section.querySelector<HTMLElement>(
           "[data-flow-horizontal-scroll]"
         );
@@ -110,33 +51,34 @@ export default function FlowArt({ children, className }: FlowArtProps) {
           "[data-flow-horizontal-track]"
         );
 
-        if (!isMobile && i < sections.length - 1) {
-          ScrollTrigger.create({
-            trigger: section,
-            start: "bottom bottom",
-            end: "bottom top",
-            pin: true,
-            pinSpacing: hasCarousel ? true : false,
-            anticipatePin: 1,
-          });
+        if (i < sections.length - 1) {
+          if (!isMobile || hasCarousel) {
+            ScrollTrigger.create({
+              trigger: section,
+              start: "bottom bottom",
+              end: "bottom top-=25%",
+              pin: true,
+              pinSpacing: hasCarousel ? true : false,
+              anticipatePin: 1,
+            });
+          }
         }
 
         // ─── Horizontal scroll (carousel) ─────────────────────────────────
         if (hScroll && hTrack) {
           const getTotal = () => hTrack.scrollWidth - hScroll.clientWidth;
 
-          // Added explicit transform containment layers to optimize scroll rendering
           gsap.set(hTrack, { willChange: "transform" });
 
           gsap.to(hTrack, {
             x: () => -getTotal(),
             ease: "none",
-            force3D: true, // Forces GPU subpixel hardware acceleration layer rendering on layout translations
+            force3D: true,
             scrollTrigger: {
               trigger: section,
               start: "bottom bottom",
               end: "bottom top",
-              scrub: true,
+              scrub: 1.5,
               invalidateOnRefresh: true,
             },
           });

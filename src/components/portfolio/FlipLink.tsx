@@ -61,7 +61,7 @@ export default function FlipLink({
               ease: "easeInOut",
               delay: STAGGER * i,
             }}
-            className="inline-block text-emerald-400"
+            className="inline-block text-[#DC143C]"
           >
             {l}
           </motion.span>

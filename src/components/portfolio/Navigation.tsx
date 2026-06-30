@@ -34,7 +34,7 @@ export default function Navigation({ onNavigate }: NavigationProps) {
   );
 
   return (
-    <nav className="fixed top-0 w-full z-50 px-6 py-6 flex justify-between items-center pointer-events-none">
+    <nav className="fixed top-0 w-full z-50 px-6 py-3 flex justify-between items-center pointer-events-none bg-white/60 backdrop-blur-lg border-b border-[#ffffff]/5">
       <div
         className="font-mono font-black text-2xl pointer-events-auto cursor-pointer"
         onClick={() => {
@@ -42,16 +42,16 @@ export default function Navigation({ onNavigate }: NavigationProps) {
           setMenuOpen(false);
         }}
       >
-        <span className="text-[#ff5555]">SK</span>
+        <span className="text-[#DC143C]">SK</span>
       </div>
 
       {/* Desktop links */}
-      <ul className="hidden md:flex gap-8 font-mono text-sm pointer-events-auto text-white">
+      <ul className="hidden md:flex gap-8 font-mono text-sm pointer-events-auto text-[#2a2a2a]">
         {navItems.map((link) => (
           <li
             key={link}
             onClick={() => handleNavigate(link)}
-            className="hover:text-[#ff5555]/60 transition-colors cursor-pointer uppercase tracking-widest"
+            className="hover:text-[#DC143C]/60 transition-colors cursor-pointer uppercase tracking-widest"
           >
             {link}
           </li>
@@ -64,15 +64,15 @@ export default function Navigation({ onNavigate }: NavigationProps) {
         aria-label={menuOpen ? "Close menu" : "Open menu"}
         aria-expanded={menuOpen}
         onClick={() => setMenuOpen((v) => !v)}
-        className="md:hidden pointer-events-auto inline-flex flex-col justify-center items-center w-11 h-11 rounded border border-white/10 bg-white/5 hover:bg-white/10 transition-colors"
+        className="md:hidden pointer-events-auto inline-flex flex-col justify-center items-center w-11 h-11 rounded border border-[#2a2a2a]/10 bg-white/5 hover:bg-white/10 transition-colors"
       >
         <span
-          className={`block w-6 h-0.5 bg-[#ff5555] transition-transform origin-center ${
+          className={`block w-6 h-0.5 bg-[#DC143C] transition-transform origin-center ${
             menuOpen ? "rotate-45 translate-y-1.5" : ""
           }`}
         />
         <span
-          className={`block w-6 h-0.5 bg-[#ff5555] mt-1 transition-transform origin-center ${
+          className={`block w-6 h-0.5 bg-[#DC143C] mt-1 transition-transform origin-center ${
             menuOpen ? "-rotate-45 -translate-y-1" : ""
           }`}
         />
@@ -82,14 +82,14 @@ export default function Navigation({ onNavigate }: NavigationProps) {
       {/* Mobile dropdown */}
       {menuOpen && (
         <div className="md:hidden pointer-events-auto absolute top-[72px] left-0 right-0 px-6">
-          <div className="bg-zinc-950 border border-white/10 rounded-xl p-4 shadow-lg">
+          <div className="bg-white border border-[#2a2a2a]/10 rounded-xl p-4 shadow-lg">
             <ul className="flex flex-col gap-3 font-mono text-sm">
               {navItems.map((link) => (
                 <li key={link}>
                   <button
                     type="button"
                     onClick={() => handleNavigate(link)}
-                    className="w-full text-left text-[#ff5555] hover:text-[#ff5555]/70 transition-colors cursor-pointer uppercase tracking-widest"
+                    className="w-full text-left text-[#DC143C] hover:text-[#DC143C]/70 transition-colors cursor-pointer uppercase tracking-widest"
                   >
                     {link}
                   </button>

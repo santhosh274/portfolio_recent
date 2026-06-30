@@ -47,7 +47,7 @@ export const certificationEntries: CertificationEntry[] = [
     desc: "Foundational cybersecurity knowledge covering threats, vulnerabilities, cryptography, identity management, and secure network design.",
     tags: ["Risk Management", "Cryptography", "Penetration Testing", "Vulnerability Assessment"],
     color: "emerald",
-    gradient: "from-emerald-900/40 via-emerald-950/30 to-black/60",
+    gradient: "from-[#DC143C]/20 via-[#DC143C]/10 to-white/60",
   },
   {
     title: "Introduction to Cybersecurity",
@@ -57,7 +57,7 @@ export const certificationEntries: CertificationEntry[] = [
     tags: ["Penetration Testing", "Vulnerability Assessment", "Network Security"],
     color: "rose",
     link: "https://media.licdn.com/dms/image/v2/D562DAQGE7Qz55VIjiQ/profile-treasury-document-images_480/B56ZfJ1JH9GoAY-/1/1751437844423?e=1782345600&v=beta&t=r3Yz8jLP9mHxppC5GZUp24KZZZD9TYVwWoNBbAdukoM",
-    gradient: "from-rose-900/40 via-rose-950/30 to-black/60",
+    gradient: "from-[#DC143C]/20 via-[#DC143C]/10 to-white/60",
   },
   {
     title: "SQL Injection Attacks",
@@ -67,7 +67,17 @@ export const certificationEntries: CertificationEntry[] = [
     tags: ["Websites", "SQLi", "Database enumeration"],
     color: "teal",
     link: "https://media.licdn.com/dms/image/v2/D562DAQG-XuHKkXveqA/profile-treasury-image-shrink_800_800/B56ZYqQu6IGoAY-/0/1744465752911?e=1781874000&v=beta&t=a7Owv7B5hAmkTYSEiPsnSEGcTwWyw0VdzbCvIi5ssk0",
-    gradient: "from-teal-900/40 via-teal-950/30 to-black/60",
+    gradient: "from-[#DC143C]/20 via-[#DC143C]/10 to-white/60",
+  },
+  {
+    title: "Cloud Foundations",
+    issuer: "AWS Academy",
+    date: "2026",
+    desc: "foundational knowledge of cloud computing, AWS core services, security, architecture, and pricing models.",
+    tags: ["AWS","Cloud Computing", "AWS Services"],
+    color: "teal",
+    link: "https://www.credly.com/badges/2c880958-d919-4cbe-83f9-12d2154b628c/public_url",
+    gradient: "from-[#DC143C]/20 via-[#DC143C]/10 to-white/60",
   },
 ];
 
@@ -155,15 +165,6 @@ export const experienceEntries: ExperienceEntry[] = [
     image: "/cyber.png",
   },
   {
-    title: "Development Lead",
-    org: "Ashok Leyland – Consultancy Project",
-    year: "2025",
-    desc: "Led development of a hardware-assisted workflow optimization system to improve operational efficiency.",
-    tags: ["Linux", "Python", "Raspberry Pi"],
-    color: "teal",
-    image: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?q=80&w=2670&auto=format&fit=crop",
-  },
-  {
     title: "Design Lead",
     org: "Ashok Leyland – Consultancy Project",
     year: "2025",
@@ -175,14 +176,7 @@ export const experienceEntries: ExperienceEntry[] = [
 ];
 
 export const projectEntries: ProjectEntry[] = [
-  {
-    title: "Ongoing - Hyperlocal Supermarket Commerce Application",
-    year: "2026",
-    desc: "Flutter based mobile application for buying in-store items through an online platform",
-    tags: ["Flutter", "AWS", "Figma", "API Design"],
-    color: "purple",
-    image: "https://images.unsplash.com/photo-1760888549280-4aef010720bd?q=80&w=387&auto=format&fit=crop",
-  },
+  /** 
   {
     title: "Ransomware Detection & Blocking",
     year: "2026",
@@ -190,7 +184,7 @@ export const projectEntries: ProjectEntry[] = [
     tags: ["Python", "Random Forest", "Node.js", "React.js"],
     color: "rose",
     image: "/ransomprj.png",
-  },
+  },*/
   {
     title: "Calibration Management System UI",
     year: "2025",
@@ -206,6 +200,14 @@ export const projectEntries: ProjectEntry[] = [
     tags: ["React.js", "Node.js", "Vercel"],
     color: "emerald",
     image: "/symposium.png",
+  },
+  {
+    title: "Gym Management & Oversight Web Application",
+    year: "2026",
+    desc: "Built a modern gym management platform combining a business showcase with role-based access, member management, and broadcast messaging.",
+    tags: ["React.js", "Node.js", "Vercel"],
+    color: "rose",
+    image: "/gym.png",
   },
   {
     title: "Cyber Portfolio",

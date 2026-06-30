@@ -13,10 +13,12 @@
     children,
     onClick,
     className = "",
+    style,
   }: {
     children: React.ReactNode;
     onClick?: () => void;
     className?: string;
+    style?: React.CSSProperties;
   }) {
     const ref = useRef<HTMLButtonElement>(null);
     const [offset, setOffset] = useState({ x: 0, y: 0 });
@@ -53,6 +55,7 @@
         style={{
           transform: `translate(${offset.x}px, ${offset.y}px)`,
           transition: "transform 0.2s cubic-bezier(0.215, 0.610, 0.355, 1)",
+          ...style,
         }}
       >
         {children}
@@ -66,14 +69,14 @@
         className="relative min-h-screen flex flex-col justify-center px-[6vw] md:px-[8vw] overflow-hidden"
         style={{
           backgroundImage: `
-            linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
-            linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px)
+            linear-gradient(to right, rgba(42, 42, 42, 0.03) 1px, transparent 1px),
+            linear-gradient(to bottom, rgba(42, 42, 42, 0.03) 1px, transparent 1px)
           `,
           backgroundSize: "40px 40px",
         }}
       >
-        {/* Dynamic Overlay Vignette to soften the background grid edge lines */}
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-purple-950/20 to-[#2d0066]/60 pointer-events-none" />
+        {/* Vignette overlay */}
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-white/20 to-white/60 pointer-events-none" />
 
         {/* Structural layout block pinned safely to the left */}
         <div className="relative z-10 max-w-2xl w-full">
@@ -85,14 +88,14 @@
             
 
             {/* Heading */}
-            <h1 className="text-[clamp(3rem,6vw,5.5rem)] font-bold leading-[0.9] tracking-tight mb-8 text-white uppercase select-none">
+            <h1 className="text-[clamp(3rem,6vw,5.5rem)] font-bold leading-[0.9] tracking-tight mb-8 text-[#2a2a2a] uppercase select-none">
               Santhosh
               <br />
-              Kumarr<span className="text-[#ff5555]">.</span>
+              Kumarr<span className="text-[#DC143C]">.</span>
             </h1>
 
             {/* Description Block */}
-            <p className="text-white/60 text-sm md:text-base leading-relaxed max-w-xl font-light mb-12">
+            <p className="text-[#2a2a2a]/60 text-sm md:text-base leading-relaxed max-w-xl font-light mb-12">
               Engineering secure digital infrastructures and building scalable, defensive
               full-stack architectures with a disciplined, security-first timeline layout.
             </p>
@@ -102,14 +105,7 @@
               {/* Primary Work Button with Subtle Light Micro-Grid Texture */}
               <MagneticButton
                 onClick={() => onNavigate("projects")}
-                className="group relative inline-flex items-center justify-between h-14 rounded-lg px-6 font-mono text-xs uppercase tracking-wider text-white bg-neutral-950 border border-neutral-950 hover:bg-[#ff5555] hover:border-[#ff5555] transition-colors duration-300 cursor-pointer sm:flex-none sm:min-w-[220px] overflow-hidden"
-                style={{
-                  backgroundImage: `
-                    linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
-                    linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px)
-                  `,
-                  backgroundSize: "12px 12px",
-                }}
+                className="group relative inline-flex items-center justify-between h-14 rounded-lg px-6 font-mono text-xs uppercase tracking-wider text-white bg-[#2a2a2a] border border-[#2a2a2a] hover:bg-[#DC143C] hover:border-[#DC143C] transition-colors duration-300 cursor-pointer sm:flex-none sm:min-w-[220px] overflow-hidden"
               >
                 <span className="relative z-10">View Selected Work</span>
                 <ArrowUpRight className="w-4 h-4 text-white/60 group-hover:text-white group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all duration-300 relative z-10" />
@@ -121,17 +117,10 @@
                   const w = window.open(links.resume, "_blank");
                   if (w) w.opener = null;
                 }}
-                className="group relative inline-flex items-center justify-between h-14 rounded-lg px-6 font-mono text-xs uppercase tracking-wider text-white/80 bg-white/10 border border-white/10 hover:border-white hover:text-white transition-colors duration-300 cursor-pointer sm:flex-none sm:min-w-[180px] overflow-hidden"
-                style={{
-                  backgroundImage: `
-                    linear-gradient(to right, rgba(255, 0, 0, 0.03) 1px, transparent 1px),
-                    linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px)
-                  `,
-                  backgroundSize: "12px 12px",
-                }}
+                className="group relative inline-flex items-center justify-between h-14 rounded-lg px-6 font-mono text-xs uppercase tracking-wider text-[#2a2a2a]/80 bg-[#2a2a2a]/5 border border-[#2a2a2a]/10 hover:border-white hover:text-[#2a2a2a] transition-colors duration-300 cursor-pointer sm:flex-none sm:min-w-[180px] overflow-hidden"
               >
                 <span className="relative z-10">Download CV</span>
-                <FileText className="w-4 h-4 text-white/40 group-hover:text-white transition-colors duration-300 relative z-10" />
+                <FileText className="w-4 h-4 text-[#2a2a2a]/40 group-hover:text-[#2a2a2a] transition-colors duration-300 relative z-10" />
               </MagneticButton>
             </div>
           </motion.div>

@@ -39,6 +39,7 @@ export default function InteractiveGlobe() {
 
     let animationFrameId: number;
     let pingTimeoutId: ReturnType<typeof setTimeout>;
+    let visible = true;
 
     let width = canvas.offsetWidth;
     let height = canvas.offsetHeight;
@@ -155,6 +156,10 @@ export default function InteractiveGlobe() {
 
     // --- RENDER LOOP ---
     const render = (now: number) => {
+      if (!visible) {
+        animationFrameId = requestAnimationFrame(render);
+        return;
+      }
       const dt = now - lastTime;
       lastTime = now;
       angleY += 0.0022 * (dt / 16.67);
@@ -182,7 +187,7 @@ export default function InteractiveGlobe() {
         
         // High visibility solid white values against underlying layout tones
         const alpha = front ? 0.45 : 0.15;
-        ctx.strokeStyle = `rgba(255, 255, 255, ${alpha})`;
+        ctx.strokeStyle = `rgba(42, 42, 42, ${alpha})`;
         ctx.beginPath();
         ctx.moveTo(p1.x, p1.y);
         ctx.lineTo(p2.x, p2.y);
@@ -193,8 +198,8 @@ export default function InteractiveGlobe() {
       for (let k = pings.length - 1; k >= 0; k--) {
         const pg = pings[k];
         const t = (now - pg.born) / pg.duration;
-        if (t >= 1) {
-          pings.splice(k, 1);
+        if (t >= 1 || t < 0) {
+          if (t >= 1) pings.splice(k, 1);
           continue;
         }
 
@@ -213,7 +218,7 @@ export default function InteractiveGlobe() {
 
         // Highlight line path while packet travels
         ctx.lineWidth = 1.2;
-        ctx.strokeStyle = `rgba(168, 85, 247, ${lineAlpha})`;
+        ctx.strokeStyle = `rgba(220, 20, 60, ${lineAlpha})`;
         ctx.beginPath();
         ctx.moveTo(p1.x, p1.y);
         ctx.lineTo(p2.x, p2.y);
@@ -225,16 +230,16 @@ export default function InteractiveGlobe() {
         const dotAlpha = front ? 1.0 : 0.5;
         ctx.beginPath();
         ctx.arc(px, py, dotSize, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(168, 85, 247, ${dotAlpha})`;
+        ctx.fillStyle = `rgba(220, 20, 60, ${dotAlpha})`;
         ctx.fill();
 
         // Expanding shockwave ring around the packet dot (front only)
         if (front) {
-          const ring = (t % 0.25) / 0.25;
+          const ring = Math.max(0, (t % 0.25) / 0.25);
           ctx.beginPath();
           // FIXED: Appended missing parameters and closing parenthesis here
           ctx.arc(px, py, dotSize + ring * 8, 0, Math.PI * 2);
-          ctx.strokeStyle = `rgba(168, 85, 247, ${(1 - ring) * 0.6})`;
+          ctx.strokeStyle = `rgba(220, 20, 60, ${(1 - ring) * 0.6})`;
           ctx.lineWidth = 0.8;
           ctx.stroke();
           ctx.lineWidth = 0.6;
@@ -245,7 +250,7 @@ export default function InteractiveGlobe() {
           const burst = (t - 0.92) / 0.08;
           ctx.beginPath();
           ctx.arc(p2.x, p2.y, burst * 12, 0, Math.PI * 2);
-          ctx.strokeStyle = `rgba(168, 85, 247, ${(1 - burst) * 0.8})`;
+          ctx.strokeStyle = `rgba(220, 20, 60, ${(1 - burst) * 0.8})`;
           ctx.lineWidth = 1;
           ctx.stroke();
           ctx.lineWidth = 0.6;
@@ -273,13 +278,13 @@ export default function InteractiveGlobe() {
             ctx.beginPath();
             ctx.arc(p.x, p.y, size, 0, Math.PI * 2);
             // Core Interactive Hub Centers set to Purple
-            ctx.fillStyle = `rgba(168, 85, 247, ${alpha})`;
+            ctx.fillStyle = `rgba(220, 20, 60, ${alpha})`;
             ctx.fill();
 
             if (front) {
               ctx.beginPath();
               ctx.arc(p.x, p.y, size * 2.2, 0, Math.PI * 2);
-              ctx.strokeStyle = `rgba(168, 85, 247, 0.3)`;
+              ctx.strokeStyle = `rgba(255, 0, 51, 0.3)`;
               ctx.lineWidth = 0.8;
               ctx.stroke();
               ctx.lineWidth = 0.6;
@@ -324,17 +329,25 @@ export default function InteractiveGlobe() {
 
     window.addEventListener("resize", handleResize);
 
+    // Stop rendering when scrolled offscreen
+    const obs = new IntersectionObserver(
+      ([entry]) => { visible = entry.isIntersecting; },
+      { threshold: 0 }
+    );
+    obs.observe(canvas);
+
     return () => {
       cancelAnimationFrame(animationFrameId);
       clearTimeout(pingTimeoutId);
       window.removeEventListener("resize", handleResize);
+      obs.disconnect();
     };
   }, []);
 
   return (
-    <div className="absolute right-0 top-1/2 -translate-y-1/2 w-[55vw] h-[55vw] max-w-[500px] max-h-[500px] pointer-events-none hidden md:flex items-center justify-center">
+    <div className="absolute right-0 top-1/2 -translate-y-1/2 w-[45vw] h-[45vw] max-w-[400px] max-h-[400px] pointer-events-none hidden md:flex items-center justify-center">
       {/* Soft dark purple aura to complement the white grid paths */}
-      <div className="absolute w-[70%] h-[70%] bg-purple-950/5 rounded-full blur-[90px]" />
+      
 
       <canvas
         ref={canvasRef}

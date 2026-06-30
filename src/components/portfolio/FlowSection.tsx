@@ -28,7 +28,6 @@ export default function FlowSection({
       data-flow-section
       aria-label={ariaLabel}
       className={cn(
-        // No overflow clipping — rotated card corners must stay rectangular and not get cut off
         "relative min-h-screen w-full outline-none isolate",
         className
       )}
@@ -58,8 +57,7 @@ export default function FlowSection({
         <div
           className="absolute inset-0 pointer-events-none -z-10"
           style={{
-            background:
-               "linear-gradient(180deg, #0a0015 0%, #2d0055 50%, #550099 100%)",
+            background: "#ffffff",
           }}
         />
 

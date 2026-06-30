@@ -66,12 +66,21 @@ export const metadata: Metadata = {
     siteName: "Santhosh Kumarr Portfolio",
     type: "website",
     locale: "en_US",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Santhosh Kumarr A - Security-First Engineer",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "Santhosh Kumarr A | Security-First Engineer",
     description:
       "Security-First Engineer | Full-Stack Developer | Cybersecurity Specialist",
+    images: ["/og-image.png"],
   },
   category: "technology",
   icons: {
@@ -113,6 +122,7 @@ const jsonLd = {
     },
   ],
   email: "santhoshkumarr.a7@gmail.com",
+  image: "https://santhosh-kumarr.vercel.app/og-image.png",
 };
 
 export default function RootLayout({
@@ -121,15 +131,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark" suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning>
       <head>
+        <meta name="theme-color" content="#ffffff" />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
       </head>
       <body
-        className={`${syne.variable} ${spaceMono.variable} font-sans antialiased selection:bg-[#FF3535]/30`}
+        className={`${syne.variable} ${spaceMono.variable} font-sans antialiased selection:bg-[#DC143C]/30`}
       >
         {children}
       </body>

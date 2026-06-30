@@ -66,17 +66,17 @@ export default function Projects() {
       {/* Editorial Section Header */}
       <div className="flex flex-col md:flex-row justify-between items-start gap-4 mb-16">
         <div>
-          <p className="text-white/60 text-sm font-mono uppercase tracking-widest flex items-center gap-2 mb-3">
+          <p className="text-[#2a2a2a]/60 text-sm font-mono uppercase tracking-widest flex items-center gap-2 mb-3">
             <Server className="w-4 h-4" /> 03 — Engineering
           </p>
-          <h2 className="text-[clamp(3rem,7vw,8rem)] font-bold leading-[0.85] tracking-tight text-white">
+          <h2 className="text-[clamp(3rem,7vw,8rem)] font-bold leading-[0.85] tracking-tight text-[#2a2a2a]">
             Selected
             <br />
             Projects.
           </h2>
         </div>
 
-        <p className="text-white/70 max-w-xs text-sm leading-relaxed mt-auto font-medium md:text-right">
+        <p className="text-[#2a2a2a]/70 max-w-xs text-sm leading-relaxed mt-auto font-medium md:text-right">
           A selective showcase of production-grade systems, secure architectures, and
           interactive digital interfaces.
         </p>
@@ -96,7 +96,7 @@ export default function Projects() {
               ref={(el) => {
                 cardRefs.current[i] = el;
               }}
-              className="relative md:sticky w-full rounded-3xl border border-white/[0.08] bg-neutral-950 overflow-hidden group cursor-pointer transition-colors duration-300 hover:bg-neutral-900 md:shadow-[0_50px_100px_rgba(0,0,0,0.5)]"
+              className="relative md:sticky w-full rounded-3xl border border-[#2a2a2a]/[0.08] bg-white overflow-hidden group cursor-pointer transition-colors duration-300 hover:bg-neutral-50 md:shadow-[0_50px_100px_rgba(0,0,0,0.1)]"
               style={{
                 top: "clamp(6vh, 12vh, 12vh)",
                 zIndex: i + 1, 
@@ -113,7 +113,7 @@ export default function Projects() {
 
               {/* Subtle grid bg matching root site style */}
               <div className="absolute inset-0 pointer-events-none opacity-[0.02]" style={{
-                backgroundImage: "linear-gradient(to right, #fff 1px, transparent 1px), linear-gradient(to bottom, #fff 1px, transparent 1px)",
+                backgroundImage: "linear-gradient(to right, rgba(42, 42, 42, 0.03) 1px, transparent 1px), linear-gradient(to bottom, rgba(42, 42, 42, 0.03) 1px, transparent 1px)",
                 backgroundSize: "40px 40px",
               }} />
 
@@ -142,50 +142,48 @@ export default function Projects() {
               {/* Split layout */}
               <div className="flex flex-col lg:grid lg:grid-cols-12 min-h-[50vh] md:min-h-[55vh]">
                 {/* Image Frame — rendered first in DOM but pushed to right on desktop via the grid */}
-                <div className="lg:col-span-5 relative min-h-[280px] lg:min-h-full overflow-hidden bg-neutral-900 border-t lg:border-t-0 lg:border-l border-white/[0.08]">
-                  <div className="absolute inset-0 opacity-[0.03] bg-[linear-gradient(to_right,#fff_1px,transparent_1px),linear-gradient(to_bottom,#fff_1px,transparent_1px)] bg-[size:14px_14px]" />
+                <div className="lg:col-span-5 relative min-h-[280px] lg:min-h-full overflow-hidden bg-neutral-50 border-t lg:border-t-0 lg:border-l border-[#2a2a2a]/[0.08]">
+                  <div className="absolute inset-0 opacity-[0.03] bg-[linear-gradient(to_right,rgba(42,42,42,0.03)_1px,transparent_1px),linear-gradient(to_bottom,rgba(42,42,42,0.03)_1px,transparent_1px)] bg-[size:14px_14px]" />
 
                   <img
                     src={p.image || "/api/placeholder/600/400"}
                     alt={p.title}
                     loading="lazy"
-                    className="w-full h-full object-cover transition-all duration-700 ease-out filter brightness-[0.75] contrast-[1.05]"
+                    className="w-full h-full object-contain p-6 transition-all duration-700 ease-out"
                   />
-
-                  <div className="absolute inset-0 bg-gradient-to-t lg:bg-gradient-to-l from-black/40 via-transparent to-transparent pointer-events-none" />
                 </div>
 
                 {/* Content */}
                 <div className="lg:col-span-7 p-8 md:p-14 flex flex-col justify-between relative z-10">
                   <div>
-                    <span className="block text-5xl md:text-6xl font-serif italic text-white/10 group-hover:text-white/20 transition-colors duration-300 mb-10">
+                    <span className="block text-5xl md:text-6xl font-serif italic text-[#2a2a2a]/10 group-hover:text-[#2a2a2a]/20 transition-colors duration-300 mb-10">
                       {projectIndex}
                     </span>
 
-                    <h3 className="text-3xl md:text-4xl font-bold text-white/90 group-hover:text-white tracking-tight uppercase leading-[1.1] transition-colors duration-300 max-w-md">
+                    <h3 className="text-3xl md:text-4xl font-bold text-[#2a2a2a]/90 group-hover:text-[#2a2a2a] tracking-tight uppercase leading-[1.1] transition-colors duration-300 max-w-md">
                       {p.title}
                     </h3>
 
-                    <p className="text-white/50 group-hover:text-white/70 text-base max-w-xl leading-relaxed mt-6 transition-colors duration-300">
+                    <p className="text-[#2a2a2a]/50 group-hover:text-[#2a2a2a]/70 text-base max-w-xl leading-relaxed mt-6 transition-colors duration-300">
                       {p.desc}
                     </p>
                   </div>
 
-                  <div className="flex flex-wrap items-center justify-between gap-4 mt-12 pt-6 border-t border-white/[0.06]">
+                  <div className="flex flex-wrap items-center justify-between gap-4 mt-12 pt-6 border-t border-[#2a2a2a]/[0.06]">
                     <div className="flex flex-wrap gap-2">
                       {p.tags.map((t) => (
                         <span
                           key={t}
-                          className="text-[10px] font-mono font-semibold tracking-wider text-white/60 bg-white/[0.04] border border-white/[0.05] px-3 py-1 rounded-md uppercase"
+                          className="text-[10px] font-mono font-semibold tracking-wider text-[#2a2a2a]/60 bg-white/[0.04] border border-[#2a2a2a]/[0.05] px-3 py-1 rounded-md uppercase"
                         >
                           {t}
                         </span>
                       ))}
                     </div>
 
-                    <div className="flex items-center gap-1.5 text-xs font-mono text-white/40 group-hover:text-white transition-colors">
+                    <div className="flex items-center gap-1.5 text-xs font-mono text-[#2a2a2a]/60 group-hover:text-[#2a2a2a] transition-colors">
                       <span>EXPLORE</span>
-                      <ArrowUpRight className="w-4 h-4 text-white/50 group-hover:text-white transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                      <ArrowUpRight className="w-4 h-4 text-[#2a2a2a]/50 group-hover:text-[#2a2a2a] transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
                     </div>
                   </div>
                 </div>
