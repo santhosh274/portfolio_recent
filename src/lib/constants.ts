@@ -1,6 +1,6 @@
 export const links = {
   resume:
-    "https://drive.google.com/file/d/1TcgUk40YebOBtal4jhggvzjEtNWvWOxD/view?usp=sharing",
+    "https://drive.google.com/file/d/1-W-uMqrgul34lSKWpVsE6kKVTa5coQad/view",
   github: "https://github.com/santhosh274",
   linkedin:
     "https://www.linkedin.com/in/santhosh-kumarr-a-ace277",
