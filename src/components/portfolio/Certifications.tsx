@@ -41,7 +41,7 @@ export default function Certifications() {
               rel="noopener noreferrer"
               className="group flex-shrink-0 w-[85vw] md:w-[42vw] lg:w-[36vw] xl:w-[30vw] outline-none"
             >
-              <div className="relative h-full rounded-2xl border border-[#2a2a2a]/[0.08] bg-white shadow-[0_30px_60px_rgba(0,0,0,0.1)] transition-shadow duration-500 group-hover:shadow-[0_40px_80px_rgba(0,0,0,0.15)] overflow-hidden flex flex-col min-h-[380px]">
+              <div className="glass glass-hover relative h-full rounded-2xl overflow-hidden flex flex-col min-h-[380px]">
                 <div className="h-36 relative overflow-hidden shrink-0">
                   <LiquidGradientCanvas
                     colors={["#DC143C", "#8B0000", "#DC143C", "#FF6B6B"]}
@@ -57,6 +57,8 @@ export default function Certifications() {
                     saturation={1.0}
                     ditherMode="off"
                     dither={0}
+                    fps={30}
+                    maxDpr={1.5}
                     className="absolute inset-0 w-full h-full"
                   />
                   <div className="absolute inset-0 bg-[#2a2a2a]/10 mix-blend-multiply pointer-events-none" />

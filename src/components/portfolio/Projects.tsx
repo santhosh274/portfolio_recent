@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useEffect, useState } from "react";
+import Image from "next/image";
 import { motion } from "framer-motion";
 import { Server, ArrowUpRight } from "lucide-react";
 import FlowSection from "./FlowSection";
@@ -14,23 +15,29 @@ export default function Projects() {
 
   useEffect(() => {
     const isMobile = window.innerWidth < 768;
-    if (isMobile) return;
+    const prefersReduced =
+      typeof window.matchMedia === "function" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (isMobile || prefersReduced) return;
+
+    let cancelled = false;
     let ctx: any;
-    let ro: ResizeObserver;
+    let ro: ResizeObserver | undefined;
 
     const initGsap = async () => {
       const { gsap } = await import("gsap");
       const { ScrollTrigger } = await import("gsap/ScrollTrigger");
+      if (cancelled) return;
       gsap.registerPlugin(ScrollTrigger);
 
       const cards = cardRefs.current.filter(Boolean) as HTMLDivElement[];
-      
+
       ctx = gsap.context(() => {
         ro = new ResizeObserver(() => ScrollTrigger.refresh());
-        cards.forEach((c) => ro.observe(c));
+        cards.forEach((c) => ro!.observe(c));
 
         cards.forEach((card, i) => {
-          if (i === cards.length - 1) return; 
+          if (i === cards.length - 1) return;
 
           const nextCard = cards[i + 1];
 
@@ -53,6 +60,7 @@ export default function Projects() {
     initGsap();
 
     return () => {
+      cancelled = true;
       ro?.disconnect();
       ctx?.revert();
     };
@@ -96,7 +104,7 @@ export default function Projects() {
               ref={(el) => {
                 cardRefs.current[i] = el;
               }}
-              className="relative md:sticky w-full rounded-3xl border border-[#2a2a2a]/[0.08] bg-white overflow-hidden group cursor-pointer transition-colors duration-300 hover:bg-neutral-50 md:shadow-[0_50px_100px_rgba(0,0,0,0.1)]"
+              className="glass glass-solid glass-hover relative md:sticky w-full rounded-3xl overflow-hidden group cursor-pointer"
               style={{
                 top: "clamp(6vh, 12vh, 12vh)",
                 zIndex: i + 1, 
@@ -142,14 +150,15 @@ export default function Projects() {
               {/* Split layout */}
               <div className="flex flex-col lg:grid lg:grid-cols-12 min-h-[50vh] md:min-h-[55vh]">
                 {/* Image Frame — rendered first in DOM but pushed to right on desktop via the grid */}
-                <div className="lg:col-span-5 relative min-h-[280px] lg:min-h-full overflow-hidden bg-neutral-50 border-t lg:border-t-0 lg:border-l border-[#2a2a2a]/[0.08]">
+                <div className="lg:col-span-5 relative min-h-[280px] lg:min-h-full overflow-hidden bg-white/20 border-t lg:border-t-0 lg:border-l border-[#2a2a2a]/[0.08]">
                   <div className="absolute inset-0 opacity-[0.03] bg-[linear-gradient(to_right,rgba(42,42,42,0.03)_1px,transparent_1px),linear-gradient(to_bottom,rgba(42,42,42,0.03)_1px,transparent_1px)] bg-[size:14px_14px]" />
 
-                  <img
+                  <Image
                     src={p.image || "/api/placeholder/600/400"}
                     alt={p.title}
-                    loading="lazy"
-                    className="w-full h-full object-contain p-6 transition-all duration-700 ease-out"
+                    fill
+                    sizes="(min-width: 1024px) 40vw, 100vw"
+                    className="object-contain p-6 transition-all duration-700 ease-out"
                   />
                 </div>
 

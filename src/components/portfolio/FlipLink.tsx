@@ -1,6 +1,5 @@
 "use client";
 
-import { motion } from "framer-motion";
 import { DURATION, STAGGER } from "@/lib/constants";
 
 interface FlipLinkProps {
@@ -12,6 +11,10 @@ interface FlipLinkProps {
   onClick?: () => void;
 }
 
+/**
+ * Per-character flip on hover. Implemented with CSS transitions instead of
+ * one motion component per character, which keeps hydration cheap.
+ */
 export default function FlipLink({
   children,
   href,
@@ -19,54 +22,44 @@ export default function FlipLink({
   rel,
   className = "",
 }: FlipLinkProps) {
+  const chars = children.split("");
+
   return (
-    <motion.a
-      initial="initial"
-      whileHover="hovered"
+    <a
       href={href}
       target={target}
       rel={rel}
-      className={`relative block overflow-hidden whitespace-nowrap ${className}`}
+      className={`group/link relative block overflow-hidden whitespace-nowrap ${className}`}
       style={{ lineHeight: 0.85 }}
     >
       <div>
-        {children.split("").map((l, i) => (
-          <motion.span
+        {chars.map((l, i) => (
+          <span
             key={`top-${i}`}
-            variants={{
-              initial: { y: 0 },
-              hovered: { y: "-100%" },
+            className="inline-block transition-transform ease-in-out group-hover/link:-translate-y-full"
+            style={{
+              transitionDuration: `${DURATION}s`,
+              transitionDelay: `${STAGGER * i}s`,
             }}
-            transition={{
-              duration: DURATION,
-              ease: "easeInOut",
-              delay: STAGGER * i,
-            }}
-            className="inline-block"
           >
             {l}
-          </motion.span>
+          </span>
         ))}
       </div>
       <div className="absolute inset-0">
-        {children.split("").map((l, i) => (
-          <motion.span
+        {chars.map((l, i) => (
+          <span
             key={`bot-${i}`}
-            variants={{
-              initial: { y: "100%" },
-              hovered: { y: 0 },
+            className="inline-block translate-y-full transition-transform ease-in-out text-[#DC143C] group-hover/link:translate-y-0"
+            style={{
+              transitionDuration: `${DURATION}s`,
+              transitionDelay: `${STAGGER * i}s`,
             }}
-            transition={{
-              duration: DURATION,
-              ease: "easeInOut",
-              delay: STAGGER * i,
-            }}
-            className="inline-block text-[#DC143C]"
           >
             {l}
-          </motion.span>
+          </span>
         ))}
       </div>
-    </motion.a>
+    </a>
   );
 }

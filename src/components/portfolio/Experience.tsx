@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { ArrowUpRight, Briefcase } from "lucide-react";
 import { motion } from "framer-motion";
 import FlowSection from "./FlowSection";
@@ -170,11 +171,12 @@ export default function Experience() {
                         }}
                         className="absolute inset-0 rounded-lg overflow-hidden shadow-2xl border border-[#2a2a2a]/[0.04] bg-neutral-100"
                       >
-                        <img
+                        <Image
                           src={exp.image || "/placeholder.svg"}
                           alt={exp.title}
-                          loading="lazy"
-                          className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105 filter brightness-[0.75] contrast-[1.05]"
+                          fill
+                          sizes="160px"
+                          className="object-cover transition-transform duration-700 ease-out group-hover:scale-105 filter brightness-[0.75] contrast-[1.05]"
                         />
                         <div className="absolute inset-0 bg-gradient-to-t from-[#2a2a2a]/10 via-transparent to-transparent" />
                       </motion.div>

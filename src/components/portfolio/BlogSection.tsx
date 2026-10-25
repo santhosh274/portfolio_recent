@@ -1,6 +1,5 @@
 "use client";
 
-import { motion } from "framer-motion";
 import { Shield, AlertTriangle, Terminal, ArrowUpRight } from "lucide-react";
 import FlowSection from "./FlowSection";
 import { blogPosts, type BlogPost } from "@/lib/data";
@@ -11,7 +10,7 @@ interface BlogSectionProps {
 
 export default function BlogSection({ onSelectPost }: BlogSectionProps) {
   return (
-    <FlowSection id="research" ariaLabel="Research" innerClassName="justify-start md:justify-between min-h-0 md:min-h-screen">
+    <FlowSection id="research" ariaLabel="Research" className="!min-h-0" innerClassName="justify-start !min-h-0">
       {/* Editorial Section Header */}
       <div className="w-full mb-8 md:mb-16 relative">
         <div className="flex items-center gap-2 font-mono text-[10px] text-[#2a2a2a]/40 tracking-[0.2em] uppercase mb-6">
@@ -31,7 +30,7 @@ export default function BlogSection({ onSelectPost }: BlogSectionProps) {
           <div
             key={post.id}
             onClick={() => onSelectPost(post)}
-            className="group relative grid grid-cols-1 md:grid-cols-12 items-center gap-6 p-6 md:p-8 rounded-xl bg-white/40 border border-[#2a2a2a]/[0.04] hover:border-[#2a2a2a]/20 hover:bg-neutral-100/40 transition-all duration-500 cursor-pointer overflow-hidden group-hover/list:opacity-50 hover:!opacity-100"
+            className="glass glass-hover group relative grid grid-cols-1 md:grid-cols-12 items-center gap-6 p-6 md:p-8 rounded-xl transition-all duration-500 cursor-pointer overflow-hidden group-hover/list:opacity-50 hover:!opacity-100"
           >
             {/* Ambient Kinetic Sheen Overlay */}
             <div className="absolute inset-0 bg-gradient-to-r from-white/[0.01] to-transparent -translate-x-full group-hover:translate-x-0 transition-transform duration-700 ease-out pointer-events-none" />

@@ -26,6 +26,9 @@ interface Ping {
   duration: number;
 }
 
+const TAU = Math.PI * 2;
+const MAX_SCREEN = 90;
+
 export default function InteractiveGlobe() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -34,26 +37,36 @@ export default function InteractiveGlobe() {
     if (!canvas) return;
     if (window.innerWidth < 768) return;
 
-    const ctx = canvas.getContext("2d");
+    const ctx = canvas.getContext("2d", { alpha: true });
     if (!ctx) return;
 
-    let animationFrameId: number;
-    let pingTimeoutId: ReturnType<typeof setTimeout>;
-    let visible = true;
+    let animationFrameId = 0;
+    let pingTimeoutId: ReturnType<typeof setTimeout> | undefined;
+    let running = false;
 
-    let width = canvas.offsetWidth;
-    let height = canvas.offsetHeight;
+    // Cap DPR: this is a decorative canvas with sub-pixel strokes, so >1.5x
+    // costs a lot of fill-rate for no perceptible gain.
+    const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
 
-    const dpr = window.devicePixelRatio || 1;
-    canvas.width = width * dpr;
-    canvas.height = height * dpr;
-    ctx.scale(dpr, dpr);
+    let width = canvas.offsetWidth || 1;
+    let height = canvas.offsetHeight || 1;
+
+    const applyCanvasSize = () => {
+      canvas.width = Math.max(1, Math.round(width * dpr));
+      canvas.height = Math.max(1, Math.round(height * dpr));
+      // setTransform (not scale) so repeated resizes never accumulate.
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    };
+
+    applyCanvasSize();
 
     // --- GLOBE CONFIG ---
     const radius = Math.min(width, height) * 0.38;
     let centerX = width / 2;
     let centerY = height / 2;
     const angleX = 0.22;
+    const cosX = Math.cos(angleX);
+    const sinX = Math.sin(angleX);
 
     // --- NODES ---
     const points: Point3D[] = [];
@@ -90,7 +103,7 @@ export default function InteractiveGlobe() {
     // Outer atmosphere points
     const outerCount = 40;
     for (let i = 0; i < outerCount; i++) {
-      const theta = Math.random() * Math.PI * 2;
+      const theta = Math.random() * TAU;
       const phi = Math.acos(Math.random() * 2 - 1);
       const rVariance = radius * (1.1 + Math.random() * 0.15);
       points.push({
@@ -101,6 +114,16 @@ export default function InteractiveGlobe() {
         isHub: false,
       });
     }
+
+    // Reused projection buffer — no per-frame object allocation.
+    const projected: ProjectedPoint[] = points.map((p) => ({
+      x: 0,
+      y: 0,
+      z: 0,
+      layer: p.layer,
+      isHub: p.isHub,
+      index: 0,
+    }));
 
     // --- PRE-COMPUTE EDGES (3D proximity) ---
     const MAX_DIST_3D = radius * 0.72;
@@ -121,6 +144,7 @@ export default function InteractiveGlobe() {
     const pings: Ping[] = [];
 
     const schedulePing = () => {
+      if (!running) return;
       if (edges.length > 0) {
         const edgeIdx = Math.floor(Math.random() * edges.length);
         const [a, b] = edges[edgeIdx];
@@ -134,48 +158,45 @@ export default function InteractiveGlobe() {
       }
       pingTimeoutId = setTimeout(schedulePing, 120 + Math.random() * 280);
     };
-    schedulePing();
 
     // --- PROJECTION ---
     let angleY = 0;
-    let lastTime = performance.now();
-
-    const project = (p: Point3D, ay: number): { x: number; y: number; z: number } => {
-      const cosY = Math.cos(ay);
-      const sinY = Math.sin(ay);
-      const x1 = p.baseX * cosY - p.baseZ * sinY;
-      const z1 = p.baseZ * cosY + p.baseX * sinY;
-      const cosX = Math.cos(angleX);
-      const sinX = Math.sin(angleX);
-      const y2 = p.baseY * cosX - z1 * sinX;
-      const z2 = z1 * cosX + p.baseY * sinX;
-      const perspective = 1000;
-      const scale = perspective / (perspective + z2);
-      return { x: centerX + x1 * scale, y: centerY + y2 * scale, z: z2 };
-    };
+    let lastTime = 0;
+    const PERSPECTIVE = 1000;
 
     // --- RENDER LOOP ---
     const render = (now: number) => {
-      if (!visible) {
-        animationFrameId = requestAnimationFrame(render);
-        return;
-      }
-      const dt = now - lastTime;
+      if (!running) return;
+      animationFrameId = requestAnimationFrame(render);
+
+      // Clamp delta so a stalled frame does not spin the globe.
+      const dt = Math.min(now - lastTime, 50);
       lastTime = now;
       angleY += 0.0022 * (dt / 16.67);
 
+      const cosY = Math.cos(angleY);
+      const sinY = Math.sin(angleY);
+
       ctx.clearRect(0, 0, width, height);
 
-      // Project all points
-      const projected: ProjectedPoint[] = points.map((p, i) => ({
-        ...project(p, angleY),
-        layer: p.layer,
-        isHub: p.isHub,
-        index: i,
-      }));
+      // Project all points into the reused buffer
+      for (let i = 0; i < points.length; i++) {
+        const p = points[i];
+        const x1 = p.baseX * cosY - p.baseZ * sinY;
+        const z1 = p.baseZ * cosY + p.baseX * sinY;
+        const y2 = p.baseY * cosX - z1 * sinX;
+        const z2 = z1 * cosX + p.baseY * sinX;
+        const scale = PERSPECTIVE / (PERSPECTIVE + z2);
+        const out = projected[i];
+        out.x = centerX + x1 * scale;
+        out.y = centerY + y2 * scale;
+        out.z = z2;
+        out.layer = p.layer;
+        out.isHub = p.isHub;
+        out.index = i;
+      }
 
       // --- STATIC EDGES (Pure White Connections) ---
-      const MAX_SCREEN = 90;
       ctx.lineWidth = 0.8;
       for (const [i, j] of edges) {
         const p1 = projected[i];
@@ -184,8 +205,7 @@ export default function InteractiveGlobe() {
         const dy = p1.y - p2.y;
         if (Math.sqrt(dx * dx + dy * dy) > MAX_SCREEN) continue;
         const front = p1.z < 0 && p2.z < 0;
-        
-        // High visibility solid white values against underlying layout tones
+
         const alpha = front ? 0.45 : 0.15;
         ctx.strokeStyle = `rgba(42, 42, 42, ${alpha})`;
         ctx.beginPath();
@@ -229,7 +249,7 @@ export default function InteractiveGlobe() {
         const dotSize = front ? 3.6 : 1.8;
         const dotAlpha = front ? 1.0 : 0.5;
         ctx.beginPath();
-        ctx.arc(px, py, dotSize, 0, Math.PI * 2);
+        ctx.arc(px, py, dotSize, 0, TAU);
         ctx.fillStyle = `rgba(220, 20, 60, ${dotAlpha})`;
         ctx.fill();
 
@@ -237,8 +257,7 @@ export default function InteractiveGlobe() {
         if (front) {
           const ring = Math.max(0, (t % 0.25) / 0.25);
           ctx.beginPath();
-          // FIXED: Appended missing parameters and closing parenthesis here
-          ctx.arc(px, py, dotSize + ring * 8, 0, Math.PI * 2);
+          ctx.arc(px, py, dotSize + ring * 8, 0, TAU);
           ctx.strokeStyle = `rgba(220, 20, 60, ${(1 - ring) * 0.6})`;
           ctx.lineWidth = 0.8;
           ctx.stroke();
@@ -249,7 +268,7 @@ export default function InteractiveGlobe() {
         if (t > 0.92) {
           const burst = (t - 0.92) / 0.08;
           ctx.beginPath();
-          ctx.arc(p2.x, p2.y, burst * 12, 0, Math.PI * 2);
+          ctx.arc(p2.x, p2.y, burst * 12, 0, TAU);
           ctx.strokeStyle = `rgba(220, 20, 60, ${(1 - burst) * 0.8})`;
           ctx.lineWidth = 1;
           ctx.stroke();
@@ -258,16 +277,17 @@ export default function InteractiveGlobe() {
       }
 
       // --- GLOBE BODY NODES (Flat Black Elements) ---
-      const sorted = [...projected].sort((a, b) => b.z - a.z);
+      projected.sort((a, b) => b.z - a.z);
 
-      for (const p of sorted) {
+      for (let i = 0; i < projected.length; i++) {
+        const p = projected[i];
         const front = p.z < 0;
 
         if (p.layer === "core") {
           const size = front ? 1.5 : 0.8;
           const alpha = front ? 0.8 : 0.25;
           ctx.beginPath();
-          ctx.arc(p.x, p.y, size, 0, Math.PI * 2);
+          ctx.arc(p.x, p.y, size, 0, TAU);
           // Pure solid flat black tracking nodes
           ctx.fillStyle = `rgba(0, 0, 0, ${alpha})`;
           ctx.fill();
@@ -276,14 +296,14 @@ export default function InteractiveGlobe() {
             const size = front ? 3.8 : 1.8;
             const alpha = front ? 1.0 : 0.4;
             ctx.beginPath();
-            ctx.arc(p.x, p.y, size, 0, Math.PI * 2);
+            ctx.arc(p.x, p.y, size, 0, TAU);
             // Core Interactive Hub Centers set to Purple
             ctx.fillStyle = `rgba(220, 20, 60, ${alpha})`;
             ctx.fill();
 
             if (front) {
               ctx.beginPath();
-              ctx.arc(p.x, p.y, size * 2.2, 0, Math.PI * 2);
+              ctx.arc(p.x, p.y, size * 2.2, 0, TAU);
               ctx.strokeStyle = `rgba(255, 0, 51, 0.3)`;
               ctx.lineWidth = 0.8;
               ctx.stroke();
@@ -294,7 +314,7 @@ export default function InteractiveGlobe() {
             const size = front ? 2.4 : 1.2;
             const alpha = front ? 0.75 : 0.25;
             ctx.beginPath();
-            ctx.arc(p.x, p.y, size, 0, Math.PI * 2);
+            ctx.arc(p.x, p.y, size, 0, TAU);
             ctx.fillStyle = `rgba(0, 0, 0, ${alpha})`;
             ctx.fill();
           }
@@ -302,44 +322,69 @@ export default function InteractiveGlobe() {
           const size = front ? 3.0 : 1.2;
           const alpha = front ? 0.4 : 0.15;
           ctx.beginPath();
-          ctx.arc(p.x, p.y, size, 0, Math.PI * 2);
+          ctx.arc(p.x, p.y, size, 0, TAU);
           ctx.fillStyle = `rgba(0, 0, 0, ${alpha})`;
           ctx.fill();
         }
       }
-
-      animationFrameId = requestAnimationFrame(render);
     };
 
-    animationFrameId = requestAnimationFrame(render);
+    let onScreen = true;
+    let tabVisible = document.visibilityState !== "hidden";
+
+    const canRun = () => onScreen && tabVisible;
+
+    const start = () => {
+      if (running || !canRun()) return;
+      running = true;
+      lastTime = performance.now();
+      animationFrameId = requestAnimationFrame(render);
+      schedulePing();
+    };
+
+    const stop = () => {
+      running = false;
+      if (animationFrameId) cancelAnimationFrame(animationFrameId);
+      animationFrameId = 0;
+      if (pingTimeoutId !== undefined) clearTimeout(pingTimeoutId);
+      pingTimeoutId = undefined;
+    };
 
     // --- RESIZE ---
     const handleResize = () => {
-      if (!canvas) return;
       width = canvas.parentElement?.clientWidth || window.innerWidth;
       height = canvas.parentElement?.clientHeight || window.innerHeight;
       canvas.style.width = width + "px";
       canvas.style.height = height + "px";
-      canvas.width = width * dpr;
-      canvas.height = height * dpr;
-      ctx.scale(dpr, dpr);
+      applyCanvasSize();
       centerX = width / 2;
       centerY = height / 2;
     };
 
-    window.addEventListener("resize", handleResize);
+    const handleVisibility = () => {
+      tabVisible = document.visibilityState !== "hidden";
+      if (canRun()) start();
+      else stop();
+    };
 
-    // Stop rendering when scrolled offscreen
+    window.addEventListener("resize", handleResize, { passive: true });
+    document.addEventListener("visibilitychange", handleVisibility);
+
+    // Stop rendering entirely (not just skip) when scrolled offscreen.
     const obs = new IntersectionObserver(
-      ([entry]) => { visible = entry.isIntersecting; },
+      ([entry]) => {
+        onScreen = entry.isIntersecting;
+        if (canRun()) start();
+        else stop();
+      },
       { threshold: 0 }
     );
     obs.observe(canvas);
 
     return () => {
-      cancelAnimationFrame(animationFrameId);
-      clearTimeout(pingTimeoutId);
+      stop();
       window.removeEventListener("resize", handleResize);
+      document.removeEventListener("visibilitychange", handleVisibility);
       obs.disconnect();
     };
   }, []);
@@ -347,7 +392,6 @@ export default function InteractiveGlobe() {
   return (
     <div className="absolute right-0 top-1/2 -translate-y-1/2 w-[45vw] h-[45vw] max-w-[400px] max-h-[400px] pointer-events-none hidden md:flex items-center justify-center">
       {/* Soft dark purple aura to complement the white grid paths */}
-      
 
       <canvas
         ref={canvasRef}

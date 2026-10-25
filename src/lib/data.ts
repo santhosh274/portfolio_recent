@@ -87,6 +87,8 @@ export interface ProjectEntry {
   desc: string;
   tags: string[];
   image?: string;
+  /** Optional link opened when the project card is clicked. */
+  githubLink?: string;
   color: "emerald" | "purple" | "rose" | "teal";
 }
 
@@ -135,7 +137,7 @@ export const experienceEntries: ExperienceEntry[] = [
     link: "teambeacon.vercel.app",
     tags: ["React.js", "Node.js", "Next.js"],
     color: "emerald",
-    image: "/freelance.png",
+    image: "/freelance.webp",
   },
   {
     title: "Development Lead",
@@ -144,7 +146,7 @@ export const experienceEntries: ExperienceEntry[] = [
     desc: "Ongoing development of a Clinic Management System designed to enhance hospital workflows and streamline patient data management.",
     tags: ["React.JS", "Node.JS", "PostgreSQL"],
     color: "purple",
-    image: "/acutix.png",
+    image: "/acutix.webp",
   },
   {
     title: "Campus Ambassador",
@@ -153,7 +155,7 @@ export const experienceEntries: ExperienceEntry[] = [
     desc: "Selected to participate in the Perplexity Partner Program, representing and promoting innovative AI solutions to a global audience.",
     tags: ["Perplexity AI", "Comet"],
     color: "purple",
-    image: "/perplexity.png",
+    image: "/perplexity.webp",
   },
   {
     title: "Cybersecurity Intern",
@@ -162,7 +164,7 @@ export const experienceEntries: ExperienceEntry[] = [
     desc: "Studied and implemented offensive attack vectors in controlled lab environments to understand real-world exploitation techniques.",
     tags: ["Linux", "RAT Simulations", "Security Tools"],
     color: "rose",
-    image: "/cyber.png",
+    image: "/cyber.webp",
   },
   {
     title: "Design Lead",
@@ -171,26 +173,33 @@ export const experienceEntries: ExperienceEntry[] = [
     desc: "Designed a minimalist and workflow-centric UI system to enhance usability and process clarity.",
     tags: ["Figma", "Photoshop", "Canva"],
     color: "emerald",
-    image: "https://images.unsplash.com/photo-1600132806608-231446b2e7af?fm=jpg&q=60&w=3000&auto=format&fit=crop",
+    image: "https://images.unsplash.com/photo-1600132806608-231446b2e7af?fm=jpg&q=65&w=1200&auto=format&fit=crop",
   },
 ];
 
 export const projectEntries: ProjectEntry[] = [
-  /** 
   {
-    title: "Ransomware Detection & Blocking",
+    title: "Autonomous Exploitation-Graded Incident-Verification System",
     year: "2026",
-    desc: "Python based forensics tool for continuous directory check and early mitigation of encryption through Machine Learning.",
-    tags: ["Python", "Random Forest", "Node.js", "React.js"],
+    desc: "Extended the MAPE-K autonomous pentesting loop with a fifth Verify phase, autonomously re-exploiting patched targets to classify outcomes as Verified Closed, Reopened, or Regression Detected. Built a six-module pipeline covering nmap discovery, scope-gated exploitation, and live remediation verification, validated by 30+ automated tests with 100% scope enforcement.",
+    tags: ["Python", "MAPE-K", "nmap", "Security Automation", "Penetration Testing"],
+    color: "purple",
+    image: "/cyber.webp",
+  },
+  {
+    title: "Ransomware Detection & Mitigation System",
+    year: "2026",
+    desc: "Designed a machine learning-based ransomware detection engine using entropy analysis, static feature extraction, and Random Forest classification. Implemented continuous directory monitoring with automated quarantine of suspicious files, alongside a React + FastAPI dashboard for real-time threat monitoring and mitigation workflows.",
+    tags: ["Python", "Random Forest", "FastAPI", "React.js", "Machine Learning"],
     color: "rose",
-    image: "/ransomprj.png",
-  },*/
+    image: "/ransomprj.webp",
+  },
   {
     title: "Calibration Management System UI",
     year: "2025",
     desc: "Designed a clean and efficient user interface to streamline Ashok Leyland's calibration workflow processes. Improved accessibility, visual clarity, and structured navigation.",
     tags: ["Figma", "Photoshop", "Canva", "UI/UX Design"],
-    image: "/redacted.jpeg",
+    image: "/redacted.webp",
     color: "teal",
   },
   {
@@ -199,7 +208,7 @@ export const projectEntries: ProjectEntry[] = [
     desc: "Built a modern and scalable event platform using React and Node.js for registrations, scheduling, and announcements. Optimized performance and deployed via Vercel.",
     tags: ["React.js", "Node.js", "Vercel"],
     color: "emerald",
-    image: "/symposium.png",
+    image: "/symposium.webp",
   },
   {
     title: "Gym Management & Oversight Web Application",
@@ -207,7 +216,7 @@ export const projectEntries: ProjectEntry[] = [
     desc: "Built a modern gym management platform combining a business showcase with role-based access, member management, and broadcast messaging.",
     tags: ["React.js", "Node.js", "Vercel"],
     color: "rose",
-    image: "/gym.png",
+    image: "/gym.webp",
   },
   {
     title: "Cyber Portfolio",
@@ -215,6 +224,6 @@ export const projectEntries: ProjectEntry[] = [
     desc: "Engineered a cybersecurity-focused personal portfolio featuring glassmorphic UI and animated interactions. Showcases secure development practices and a security-first engineering philosophy.",
     tags: ["React", "TailwindCSS", "Vite"],
     color: "purple",
-    image: "/portfolio.png",
+    image: "/portfolio.webp",
   },
 ];

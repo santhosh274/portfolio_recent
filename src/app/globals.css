@@ -40,6 +40,42 @@ body {
   padding: 0;
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+html {
+  /* Lenis owns smooth scrolling; a native smooth rule would fight it. */
+  scroll-behavior: auto;
+  -webkit-text-size-adjust: 100%;
+}
+
+/* Hero entrance: runs from the first paint via CSS instead of waiting for
+   hydration, so the name is never held at opacity:0 by the JS bundle. */
+@keyframes hero-reveal {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 25px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+.hero-reveal {
+  animation: hero-reveal 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* Honor the OS motion preference: keeps the layout identical, removes motion. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
 }
 
 ::-webkit-scrollbar {
@@ -87,4 +123,240 @@ body {
 .animate-gradient-text {
   background-size: 200% auto;
   animation: gradient-shift 3s ease infinite;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   iOS-style liquid glass
+
+   Three cues make a translucent sheet read as glass rather than as a plain
+   white panel:
+
+     1. a faintly cool tint, so the sheet is a touch darker than the page and
+        the white specular rim has something to sit against;
+     2. a bright 1px rim that is strongest at the top-left / bottom-right
+        corners, exactly where a lens catches light;
+     3. an inner bevel (bright top-left, shaded bottom-right) plus a soft
+        diffuse drop shadow that lifts the sheet off the page.
+
+   Purely additive: the element keeps its own radius and layout. The element
+   must be positioned (relative/sticky/fixed/absolute) for the pseudo layers
+   to resolve against it — `.glass` deliberately does not set `position` so
+   that `md:sticky` and friends keep working.
+   ───────────────────────────────────────────────────────────────────────── */
+
+.glass {
+  --glass-blur: 22px;
+  isolation: isolate;
+  background:
+    linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.6) 0%,
+      rgba(244, 249, 255, 0.72) 30%,
+      rgba(238, 245, 255, 0.66) 62%,
+      rgba(255, 255, 255, 0.58) 100%
+    );
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(200%) brightness(1.07)
+    contrast(1.02);
+  backdrop-filter: blur(var(--glass-blur)) saturate(200%) brightness(1.07)
+    contrast(1.02);
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  box-shadow:
+    /* bevel: bright top-left, shaded bottom-right */
+    inset 0 1px 0 0 rgba(255, 255, 255, 1),
+    inset 0 2px 4px -2px rgba(255, 255, 255, 0.9),
+    inset 1px 0 0 0 rgba(255, 255, 255, 0.85),
+    inset 0 -1px 0 0 rgba(255, 255, 255, 0.55),
+    inset -1px 0 0 0 rgba(255, 255, 255, 0.5),
+    inset 0 18px 26px -24px rgba(255, 255, 255, 1),
+    inset 0 -22px 30px -28px rgba(42, 42, 42, 0.32),
+    /* float */
+    0 1px 1px rgba(42, 42, 42, 0.03),
+    0 12px 24px -14px rgba(42, 42, 42, 0.16),
+    0 34px 70px -38px rgba(42, 42, 42, 0.26);
+  transition:
+    box-shadow 0.45s cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 0.45s ease,
+    opacity 0.4s ease;
+}
+
+/* Dense "regular material": for large surfaces that physically stack on top of
+   one another (the sticky project cards). A clear fill would let the card
+   underneath ghost through, so this keeps the tint, blur, rim and shadow but
+   raises the fill enough to stay legible. */
+.glass-solid {
+  --glass-blur: 26px;
+  background:
+    linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.988) 0%,
+      rgba(247, 251, 255, 0.984) 30%,
+      rgba(242, 248, 255, 0.984) 62%,
+      rgba(255, 255, 255, 0.988) 100%
+    );
+}
+
+/* Light spill: bright from the top-left, softer bounce from bottom-right. */
+.glass::before,
+.glass::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+.glass::before {
+  background-image:
+    radial-gradient(
+      130% 110% at 6% -14%,
+      rgba(255, 255, 255, 0.95) 0%,
+      rgba(255, 255, 255, 0.42) 22%,
+      rgba(255, 255, 255, 0) 58%
+    ),
+    radial-gradient(
+      95% 85% at 104% 118%,
+      rgba(255, 255, 255, 0.6) 0%,
+      rgba(255, 255, 255, 0) 56%
+    );
+  background-size: 130% 130%;
+  background-position: 0% 0%;
+  background-repeat: no-repeat;
+  transition: background-position 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Specular rim: the 1px gradient border that sells the glass edge. Brightest
+   where the light source hits, near-transparent through the middle. */
+.glass::after {
+  padding: 1px;
+  background: linear-gradient(
+    140deg,
+    rgba(255, 255, 255, 1) 0%,
+    rgba(255, 255, 255, 0.9) 9%,
+    rgba(255, 255, 255, 0.3) 26%,
+    rgba(255, 255, 255, 0.06) 46%,
+    rgba(255, 255, 255, 0.05) 60%,
+    rgba(255, 255, 255, 0.45) 82%,
+    rgba(255, 255, 255, 1) 95%,
+    rgba(255, 255, 255, 1) 100%
+  );
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  mask-composite: exclude;
+}
+
+@media (hover: hover) {
+  .glass-hover:hover {
+    border-color: rgba(255, 255, 255, 0.85);
+    box-shadow:
+      inset 0 1px 0 0 rgba(255, 255, 255, 1),
+      inset 1px 0 0 0 rgba(255, 255, 255, 0.95),
+      inset 0 -1px 0 0 rgba(255, 255, 255, 0.6),
+      inset -1px 0 0 0 rgba(255, 255, 255, 0.55),
+      inset 0 18px 28px -22px rgba(255, 255, 255, 1),
+      inset 0 -20px 28px -26px rgba(42, 42, 42, 0.32),
+      0 1px 1px rgba(42, 42, 42, 0.03),
+      0 16px 30px -14px rgba(42, 42, 42, 0.2),
+      0 44px 90px -40px rgba(42, 42, 42, 0.3);
+  }
+
+  /* The highlight drifts a little toward the cursor side — the "liquid" cue. */
+  .glass-hover:hover::before {
+    background-position: 100% 100%;
+  }
+}
+
+/* Floating top bar: full-bleed glass with a hairline light seam. */
+.glass-bar {
+  isolation: isolate;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.72) 0%,
+    rgba(247, 251, 255, 0.52) 58%,
+    rgba(255, 255, 255, 0.64) 100%
+  );
+  -webkit-backdrop-filter: blur(26px) saturate(200%) brightness(1.06);
+  backdrop-filter: blur(26px) saturate(200%) brightness(1.06);
+  box-shadow:
+    inset 0 1px 0 0 rgba(255, 255, 255, 1),
+    inset 0 -1px 0 0 rgba(255, 255, 255, 0.45),
+    0 1px 0 rgba(42, 42, 42, 0.03),
+    0 12px 28px -20px rgba(42, 42, 42, 0.28);
+}
+
+.glass-bar::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    rgba(42, 42, 42, 0) 0%,
+    rgba(42, 42, 42, 0.14) 22%,
+    rgba(42, 42, 42, 0.14) 78%,
+    rgba(42, 42, 42, 0) 100%
+  );
+  pointer-events: none;
+}
+
+/* Denser fill for the modal, which sits over a dark blurred scrim. */
+.glass-modal {
+  background:
+    linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.92) 0%,
+      rgba(250, 253, 255, 0.84) 45%,
+      rgba(244, 250, 255, 0.9) 100%
+    );
+}
+
+/* Cheaper blur on small screens where GPU fill-rate is the constraint. */
+@media (max-width: 767px) {
+  .glass {
+    --glass-blur: 14px;
+  }
+
+  /* The modal fills nearly the whole phone screen, so the weaker mobile blur
+     would let the page text behind it show through the copy. Denser fill
+     keeps the article readable while the rim and shadow stay glassy. */
+  .glass-modal {
+    background:
+      linear-gradient(
+        135deg,
+        rgba(255, 255, 255, 0.97) 0%,
+        rgba(250, 253, 255, 0.95) 45%,
+        rgba(244, 250, 255, 0.96) 100%
+      );
+  }
+}
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .glass,
+  .glass-bar {
+    background: rgba(252, 253, 255, 0.96);
+  }
+
+  .glass-solid {
+    background: rgba(252, 253, 255, 0.99);
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .glass,
+  .glass-bar {
+    background: rgba(252, 253, 255, 0.98);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+
+  .glass-solid {
+    background: rgba(252, 253, 255, 0.99);
+  }
 }

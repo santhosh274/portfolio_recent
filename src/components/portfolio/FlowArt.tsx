@@ -1,11 +1,7 @@
 "use client";
 
 import { useEffect, useRef, ReactNode } from "react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { cn } from "@/lib/utils";
-
-gsap.registerPlugin(ScrollTrigger);
 
 interface FlowArtProps {
   children: ReactNode;
@@ -16,86 +12,114 @@ export default function FlowArt({ children, className }: FlowArtProps) {
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (!containerRef.current) return;
+    const root = containerRef.current;
+    if (!root) return;
 
+    let cancelled = false;
     const observers: ResizeObserver[] = [];
+    let ctx: { revert: () => void } | null = null;
+    let refreshOnLoad: (() => void) | null = null;
 
-    const ctx = gsap.context(() => {
+    const init = async () => {
+      // Loaded on demand: GSAP is not part of the initial JS bundle anymore.
+      const [gsapModule, stModule] = await Promise.all([
+        import("gsap"),
+        import("gsap/ScrollTrigger"),
+      ]);
+      if (cancelled) return;
+
+      const gsap = (gsapModule as any).gsap ?? (gsapModule as any).default;
+      const ScrollTrigger = (stModule as any).ScrollTrigger ?? (stModule as any).default;
+
+      gsap.registerPlugin(ScrollTrigger);
+      ScrollTrigger.config({ ignoreMobileResize: true });
+
       const isMobile = window.innerWidth < 768;
       const sections = Array.from(
-        containerRef.current!.querySelectorAll("[data-flow-section]")
+        root.querySelectorAll<HTMLElement>("[data-flow-section]")
       );
 
-      sections.forEach((section, i) => {
-        gsap.set(section, { zIndex: i + 1, backgroundColor: "transparent" });
+      ctx = gsap.context(() => {
+        sections.forEach((section, i) => {
+          gsap.set(section, { zIndex: i + 1, backgroundColor: "transparent" });
 
-        const inner = section.querySelector(".flow-art-container");
+          const inner = section.querySelector(".flow-art-container");
 
-        // Check if CURRENT section has a horizontal carousel
-        const hasCarousel = section.querySelector<HTMLElement>(
-          "[data-flow-horizontal-scroll]"
-        );
-
-        // ─── Ensure all sections are fully visible (no rotation entrance animation) ──
-        if (i > 0 && inner) {
-          gsap.set(inner, { autoAlpha: 1, y: 0, rotation: 0, scale: 1 });
-        }
-
-        // ─── Pin every non-last section ──
-        // On mobile, pin only sections with carousels so they have enough
-        // scroll distance to fully translate all items horizontally.
-        const hScroll = section.querySelector<HTMLElement>(
-          "[data-flow-horizontal-scroll]"
-        );
-        const hTrack = section.querySelector<HTMLElement>(
-          "[data-flow-horizontal-track]"
-        );
-
-        if (i < sections.length - 1) {
-          if (!isMobile || hasCarousel) {
-            ScrollTrigger.create({
-              trigger: section,
-              start: "bottom bottom",
-              end: "bottom top-=25%",
-              pin: true,
-              pinSpacing: hasCarousel ? true : false,
-              anticipatePin: 1,
-            });
+          // ─── Ensure all sections are fully visible (no rotation entrance animation) ──
+          if (i > 0 && inner) {
+            gsap.set(inner, { autoAlpha: 1, y: 0, rotation: 0, scale: 1 });
           }
-        }
 
-        // ─── Horizontal scroll (carousel) ─────────────────────────────────
-        if (hScroll && hTrack) {
-          const getTotal = () => hTrack.scrollWidth - hScroll.clientWidth;
+          const hScroll = section.querySelector<HTMLElement>(
+            "[data-flow-horizontal-scroll]"
+          );
+          const hTrack = section.querySelector<HTMLElement>(
+            "[data-flow-horizontal-track]"
+          );
 
-          gsap.set(hTrack, { willChange: "transform" });
+          // ─── Pin every non-last section ──
+          // On mobile, pin only sections with carousels so they have enough
+          // scroll distance to fully translate all items horizontally.
+          if (i < sections.length - 1) {
+            if (!isMobile || hScroll) {
+              ScrollTrigger.create({
+                trigger: section,
+                start: "bottom bottom",
+                end: "bottom top-=25%",
+                pin: true,
+                pinSpacing: hScroll ? true : false,
+                anticipatePin: 1,
+              });
+            }
+          }
 
-          gsap.to(hTrack, {
-            x: () => -getTotal(),
-            ease: "none",
-            force3D: true,
-            scrollTrigger: {
-              trigger: section,
-              start: "bottom bottom",
-              end: "bottom top",
-              scrub: 1.5,
-              invalidateOnRefresh: true,
-            },
-          });
+          // ─── Horizontal scroll (carousel) ─────────────────────────────────
+          if (hScroll && hTrack) {
+            const getTotal = () => hTrack.scrollWidth - hScroll.clientWidth;
 
-          const ro = new ResizeObserver(() => ScrollTrigger.refresh());
-          ro.observe(hScroll);
-          ro.observe(hTrack);
-          observers.push(ro);
-        }
-      });
+            gsap.set(hTrack, { willChange: "transform" });
+
+            gsap.to(hTrack, {
+              x: () => -getTotal(),
+              ease: "none",
+              force3D: true,
+              scrollTrigger: {
+                trigger: section,
+                start: "bottom bottom",
+                end: "bottom top",
+                scrub: 1.5,
+                invalidateOnRefresh: true,
+              },
+            });
+
+            const ro = new ResizeObserver(() => ScrollTrigger.refresh());
+            ro.observe(hScroll);
+            ro.observe(hTrack);
+            observers.push(ro);
+          }
+        });
+      }, root);
 
       ScrollTrigger.refresh();
-    }, containerRef);
+
+      // Re-measure once webfonts and lazy images have settled so trigger
+      // offsets are exact (prevents late-scroll layout jumps).
+      refreshOnLoad = () => {
+        if (!cancelled) ScrollTrigger.refresh();
+      };
+      if (document.fonts?.ready) {
+        document.fonts.ready.then(refreshOnLoad).catch(() => {});
+      }
+      window.addEventListener("load", refreshOnLoad, { once: true });
+    };
+
+    init();
 
     return () => {
+      cancelled = true;
       observers.forEach((ro) => ro.disconnect());
-      ctx.revert();
+      if (refreshOnLoad) window.removeEventListener("load", refreshOnLoad);
+      ctx?.revert();
     };
   }, []);
 

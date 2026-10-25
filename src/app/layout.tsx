@@ -1,18 +1,30 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Syne, Space_Mono } from "next/font/google";
 import "./globals.css";
 
 const syne = Syne({
   variable: "--font-syne",
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800"],
+  display: "swap",
+  preload: true,
+  adjustFontFallback: true,
 });
 
 const spaceMono = Space_Mono({
   variable: "--font-space-mono",
   subsets: ["latin"],
   weight: ["400", "700"],
+  display: "swap",
+  preload: true,
+  adjustFontFallback: true,
 });
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  themeColor: "#ffffff",
+  colorScheme: "light",
+};
 
 export const metadata: Metadata = {
   title: {
@@ -133,7 +145,13 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        <meta name="theme-color" content="#ffffff" />
+        {/*
+          Dark Reader (and similar extensions) rewrites every inline style and
+          injects data-darkreader-* attributes before React hydrates, which
+          React reports as a hydration mismatch it cannot patch. The site is
+          intentionally light-only, so opt out of extension theming.
+        */}
+        <meta name="darkreader-lock" />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
